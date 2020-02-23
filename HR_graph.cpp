@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <iostream>
 #include "HR_graph.hpp"
 
 RandomGraph::RandomGraph() {
@@ -55,12 +56,17 @@ RandomGraph::~RandomGraph() {
 	delete[] adjacencyTable;
 }
 
-int RandomGraph::selectNeighbour(int curID, int desID) const {
+int RandomGraph::selectNeighbour(int curID, int desID, int lastID) const {
 	double maxDis = BIG_ENOUGH;
 	int next = -1;
 	hr_debug("select next for node %d:\n", curID);
 	ChainListNode* t = adjacencyTable[curID];
 	while (t != NULL) {
+//	    cout << t->neighbourID << " - ";
+	    if(t->neighbourID == lastID){
+            t = t->next;
+            continue;
+        }
 		double dis = nodeList[t->neighbourID]->HyperbolicDistanceTo(*nodeList[desID]);
 		hr_debug("  to node %d: %.3f\n", t->neighbourID, dis);
 		if (dis < maxDis) {
@@ -69,6 +75,7 @@ int RandomGraph::selectNeighbour(int curID, int desID) const {
 		}
 		t = t->next;
 	}
+//	cout << endl;
 	return next;
 }
 
@@ -83,10 +90,14 @@ bool RandomGraph::routingTest(int srcID, int desID) const {
 	int hopNum = 0; //路由路径的跳数
 
 	int curID = srcID;
+	int lastID = -1;
 	hr_log("%d(sur)", curID);
 	while (curID != desID) {
+//	    hr_log("\nlastId: %d\n", lastID);
 		visited[curID] = true;
-		int nextID = selectNeighbour(curID, desID);
+		int nextID = selectNeighbour(curID, desID, lastID);
+//        hr_log("nextId: %d\n", nextID);
+        lastID = curID;
 		hr_log(" -> %d", nextID);
 		if (hr_log_ON) {
 			if (nextID < BASE * SCARE_FREE_NETWORK_SIZE)
@@ -98,7 +109,7 @@ bool RandomGraph::routingTest(int srcID, int desID) const {
 			else
 				printf("(hig)");
 		}
-		if (visited[nextID]) {
+		if (visited[nextID] || nextID == -1) {
 			hr_log("\n[FALSE]: loop occured\n\n");
 			delete[] visited;
 			return false;
