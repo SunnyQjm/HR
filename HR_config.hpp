@@ -22,9 +22,9 @@
 #define MIDDLE_ORBIT_RADIUS 22371
 #define HIGH_ORBIT_RADIUS 42157
 //各种类卫星对应的双曲半径           //bh调参重点对象-能否路由成功的关键点就在于有没有合理的双曲半径设置方法
-#define LOW_ORBIT_HYPERRADIUS 5.0
-#define MIDDLE_ORBIT_HYPERRADIUS 4.9
-#define HIGH_ORBIT_HYPERRADIUS 4.2
+#define LOW_ORBIT_HYPERRADIUS 5.7
+#define MIDDLE_ORBIT_HYPERRADIUS 5.3
+#define HIGH_ORBIT_HYPERRADIUS 4.1
 
 //双曲坐标映射用参数
 //球极射影时使用的球半径,应当与宇宙距离同一个数量级,单位千米
