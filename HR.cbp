@@ -33,7 +33,9 @@
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
-				<Compiler/>
+				<Compiler>
+					<Add directory="/home/sunny/Documents/HR/libxl/include_cpp"/>
+				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -f &quot;/home/sunny/Documents/HR/Makefile&quot;  VERBOSE=1 HR"/>
 					<CompileFile command="/usr/bin/make -f &quot;/home/sunny/Documents/HR/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
@@ -47,7 +49,9 @@
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
-				<Compiler/>
+				<Compiler>
+					<Add directory="/home/sunny/Documents/HR/libxl/include_cpp"/>
+				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -f &quot;/home/sunny/Documents/HR/Makefile&quot;  VERBOSE=1 HR/fast"/>
 					<CompileFile command="/usr/bin/make -f &quot;/home/sunny/Documents/HR/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
@@ -76,6 +80,12 @@
 			<Option target="HR"/>
 		</Unit>
 		<Unit filename="/home/sunny/Documents/HR/HR_node.hpp">
+			<Option target="HR"/>
+		</Unit>
+		<Unit filename="/home/sunny/Documents/HR/LibXLHelper.cpp">
+			<Option target="HR"/>
+		</Unit>
+		<Unit filename="/home/sunny/Documents/HR/LibXLHelper.h">
 			<Option target="HR"/>
 		</Unit>
 		<Unit filename="/home/sunny/Documents/HR/main.cpp">

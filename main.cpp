@@ -1,6 +1,7 @@
 #include <iostream>
 #include "HR_graph.hpp"
 #include <ctime>
+#include "LibXLHelper.h"
 
 int main()
 {
@@ -10,9 +11,10 @@ int main()
     //system("pause");
     int successNum = 0;
     int totalNum = 10000;
+    LibXLHelper libXlHelper;
     srand((unsigned)time(NULL));
     for (int i = 0; i < totalNum; i++) {
-        if(g.randomRoutingTest()) {
+        if(g.randomRoutingTest(&libXlHelper)) {
             successNum++;
         }
     }

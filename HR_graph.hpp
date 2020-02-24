@@ -2,6 +2,7 @@
 #define HR_GRAPH
 
 #include "HR_node.hpp"
+#include "LibXLHelper.h"
 
 //随机网络拓扑
 class RandomGraph {
@@ -29,9 +30,9 @@ public:
 	}
 
 	//两个随机地面节点间的转发测试
-	bool randomRoutingTest() const;
+    bool randomRoutingTest(LibXLHelper *pHelper) const;
 	//转发测试,输入参数为始终点的ID
-	bool routingTest(int srcID, int desID) const;
+    bool routingTest(int srcID, int desID, LibXLHelper *pHelper) const;
 
 	RandomGraph();
 	~RandomGraph();
