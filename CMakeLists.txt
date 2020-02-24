@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 IF(WIN32)
     message("win")
+    include_directories(libxl/include_cpp)
+    link_directories(libxl/lib64)
 ELSEIF(UNIX)
     message("UNIX")
     include_directories(libxl/include_cpp)
