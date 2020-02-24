@@ -11,6 +11,8 @@ ELSEIF(UNIX)
     include_directories(libxl/include_cpp)
     link_directories(libxl/lib64)
 ELSE()
+    include_directories(libxl/include_cpp)
+    link_directories(libxl/lib64)
     message("OTHER")
 ENDIF()
 
