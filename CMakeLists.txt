@@ -2,24 +2,22 @@ cmake_minimum_required(VERSION 3.9)
 project(HR)
 
 set(CMAKE_CXX_STANDARD 14)
-
-
-IF(WIN32)
+add_compile_options(-g)
+IF (WIN32)
     message("win")
     include_directories(libxl/include_cpp)
-    link_directories(libxl/lib64)
+    link_directories(libxl/bin)
 ELSEIF (APPLE)
     message("apple")
     include_directories(libxl/include_cpp)
     link_directories(libxl/lib)
-ELSEIF(UNIX)
+ELSEIF (UNIX)
     message("UNIX")
     include_directories(libxl/include_cpp)
     link_directories(libxl/lib64)
-ELSE()
-
+ELSE ()
     message("OTHER")
-ENDIF()
+ENDIF ()
 
 
 add_executable(HR main.cpp HR_graph.cpp HR_node.cpp LibXLHelper.cpp LibXLHelper.h)
