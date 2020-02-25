@@ -4,10 +4,14 @@
 
 #ifndef HR_LIBXLHELPER_H
 #define HR_LIBXLHELPER_H
+#ifndef _WIN32
 #include <libxl.h>
+#endif
 #include <string>
 
+#ifndef _WIN32
 using namespace libxl;
+#endif
 using namespace std;
 
 class LibXLHelper {
@@ -21,8 +25,10 @@ public:
         int hopNum = -1;                 // 路由成功的跳数
     };
 private:
+#ifndef _WIN32
     Book *book;
     Sheet* sheet;
+#endif
     string fileName;
     int curRow = 0;
 
