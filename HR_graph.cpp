@@ -112,6 +112,10 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
             pathStack.pop();
             continue;
         }
+        // 限制只能回跳一步
+        if(!pathStack.empty()) {
+            pathStack.pop();
+        }
         pathStack.push(curID);
 //        hr_log("nextId: %d\n", nextID);
 //        lastID = curID;
