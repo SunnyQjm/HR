@@ -1,6 +1,7 @@
 #ifndef HR_GRAPH
 #define HR_GRAPH
 
+#include <map>
 #include "HR_node.hpp"
 #include "LibXLHelper.h"
 
@@ -38,7 +39,7 @@ public:
 	~RandomGraph();
 private:
 	//给定当前节点ID与终点ID,依据双曲距离计算下一跳的节点ID
-    int selectNeighbour(int curID, int desID, int i) const;
+    int selectNeighbour(int curID, int desID, int i, std::map<int, int> map) const;
 };
 
 #endif //!HR_GRAPH

@@ -2,6 +2,8 @@
 #include <iostream>
 #include "HR_graph.hpp"
 #include "LibXLHelper.h"
+#include <map>
+#include <stack>
 
 RandomGraph::RandomGraph() {
     //节点数目 = 地面节点 + 各高度的卫星节点
@@ -57,14 +59,16 @@ RandomGraph::~RandomGraph() {
     delete[] adjacencyTable;
 }
 
-int RandomGraph::selectNeighbour(int curID, int desID, int lastID) const {
+int RandomGraph::selectNeighbour(int curID, int desID, int i, std::map<int, int> map) const {
     double maxDis = BIG_ENOUGH;
     int next = -1;
     hr_debug("select next for node %d:\n", curID);
     ChainListNode *t = adjacencyTable[curID];
+//    cout << "{ " << endl;
     while (t != NULL) {
-//	    cout << t->neighbourID << " - ";
-        if (t->neighbourID == lastID) {
+//        cout << "(" << t->neighbourID << ", " << map[t->neighbourID] << "), ";
+//	    cout << map[t->neighbourID] << " - ";
+        if (map[t->neighbourID] != 0) {
             t = t->next;
             continue;
         }
@@ -86,23 +90,31 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
     item.des = desID;
     hr_log("src:%d, des:%d\n", srcID, desID);
     //记录访问数据
-    bool *visited = new bool[nodeNum];
+//    int *visited = new int[nodeNum];
+    std::map<int, int> visited;
     for (int i = 0; i < nodeNum; i++)
-        visited[i] = false;
+        visited[i] = 0;
     //路由统计
     double totalDis = 0; //路由路径的总地理距离
     int hopNum = 0; //路由路径的跳数
 
+    stack<int> pathStack;
     int curID = srcID;
-    int lastID = -1;
     hr_log("%d(sur)", curID);
     item.path = to_string(curID) + "(sur)";
     while (curID != desID) {
 //	    hr_log("\nlastId: %d\n", lastID);
-        visited[curID] = true;
-        int nextID = selectNeighbour(curID, desID, lastID);
+        visited[curID] = 1;
+        int nextID = selectNeighbour(curID, desID, pathStack.empty() ? -1 : pathStack.top(), visited);
+        if(nextID == -1 && !pathStack.empty()) {      // 发生循环错误
+            visited[curID] = -1;
+            curID = pathStack.top();
+            pathStack.pop();
+            continue;
+        }
+        pathStack.push(curID);
 //        hr_log("nextId: %d\n", nextID);
-        lastID = curID;
+//        lastID = curID;
         hr_log(" -> %d", nextID);
         item.path += " -> ";
         item.path += to_string(nextID);
@@ -122,11 +134,13 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
             }
         }
 
-        if (visited[nextID] || nextID == -1) {
-            hr_log("\n[FALSE]: loop occured\n\n");
+        if (nextID == -1) {
+            hr_log("\n[FALSE]: loop occured (%d, %d)\n\n", visited[nextID], nextID);
             item.result = "[FALSE]: loop occured";
-            pHelper->addItem(item);
-            delete[] visited;
+            if(pHelper != nullptr) {
+                pHelper->addItem(item);
+            }
+//            delete[] visited;
             return false;
         }
         totalDis += nodeList[curID]->GeographicDistanceTo(*nodeList[nextID]);
@@ -136,9 +150,11 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
     item.result = "success";
     item.totalDistance = totalDis;
     item.hopNum = hopNum;
-    pHelper->addItem(item);
+    if(pHelper != nullptr) {
+        pHelper->addItem(item);
+    }
     hr_log("\n[SUCCESS]: total distance: %.3f, hop num: %d\n\n", totalDis, hopNum);
-    delete[] visited;
+//    delete[] visited;
     return true;
 }
 
@@ -147,11 +163,11 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
 //两个随机地面节点间的转发测试，两点间需要可达
 bool RandomGraph::randomRoutingTest(LibXLHelper *pHelper) const {
     //DFS，验证des是否可达
-    ChainListNode **searchStack = new ChainListNode *[SCARE_FREE_NETWORK_SIZE * BASE];
+    auto **searchStack = new ChainListNode *[SCARE_FREE_NETWORK_SIZE * BASE];
     bool visited[BASE * (SCARE_FREE_NETWORK_SIZE + LOW_ORBIT_SIZE + MIDDLE_ORBIT_SIZE + HIGH_ORBIT_SIZE)];
     bool accessible = false;
-    int src, des;
-    while (accessible == false) {
+    int src = 0, des = 0;
+    while (!accessible) {
         src = univeralDistribution(0, BASE * SCARE_FREE_NETWORK_SIZE);
         do {
             des = univeralDistribution(0, BASE * SCARE_FREE_NETWORK_SIZE);

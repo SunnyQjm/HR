@@ -28,7 +28,7 @@
 
 //双曲坐标映射用参数
 //球极射影时使用的球半径,应当与宇宙距离同一个数量级,单位千米
-#define RADIUS_FOR_STEREGRAPHIC_PROJECTION 40000 
+#define RADIUS_FOR_STEREGRAPHIC_PROJECTION 42157
 //节点分级,用于指定双曲坐标,将节点按通信半径从高至低排列,比例介于RANKm_PROPORTION与RANK(m+1)_PROPORTION间的节点划归RANKm
 #define RANK1_PROPORTION 0.0625
 #define RANK2_PROPORTION 0.125
