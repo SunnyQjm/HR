@@ -11,7 +11,7 @@ int main() {
     int successNum = 0;
     int totalNum = 10000;
     LibXLHelper libXlHelper;
-//    g.routingTest(1042, 1249, nullptr);
+//    g.routingTest(1311, 156, nullptr);
     srand((unsigned) time(NULL));
     for (int i = 0; i < totalNum; i++) {
         if (g.randomRoutingTest(&libXlHelper)) {

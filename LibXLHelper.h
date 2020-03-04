@@ -16,6 +16,10 @@ using namespace std;
 
 class LibXLHelper {
 public:
+    enum Type {
+        ROUTE_INFO,
+        DEGREE_INFO
+    };
     struct Item {
         int src;                    // 起点
         int des;                    // 终点
@@ -23,6 +27,11 @@ public:
         string path;                // 路由路径
         int totalDistance = -1;          // 总距离
         int hopNum = -1;                 // 路由成功的跳数
+    };
+
+    struct DegreeInfoItem {
+        int nodeId;
+        long degree;
     };
 private:
 #ifndef _WIN32
@@ -33,8 +42,11 @@ private:
     int curRow = 0;
 
 public:
-    explicit LibXLHelper(string fileName = "test.xls");
+    explicit LibXLHelper(string fileName = "test.xls", Type type = ROUTE_INFO);
     const LibXLHelper& addItem(const Item& item);
+
+    const LibXLHelper& addDegreeInfoItem(const DegreeInfoItem& degreeInfoItem);
+
     ~LibXLHelper();
 };
 

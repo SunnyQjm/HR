@@ -35,6 +35,8 @@ public:
 	//转发测试,输入参数为始终点的ID
     bool routingTest(int srcID, int desID, LibXLHelper *pHelper) const;
 
+    void printNeighbour(int id) const;
+
 	RandomGraph();
 	~RandomGraph();
 private:

@@ -4,6 +4,7 @@
 #include "LibXLHelper.h"
 #include <map>
 #include <stack>
+#include <set>
 
 RandomGraph::RandomGraph() {
     //节点数目 = 地面节点 + 各高度的卫星节点
@@ -28,10 +29,15 @@ RandomGraph::RandomGraph() {
         nodeList[i] = &NodeGenerator::randomHighOrbitNode();
         adjacencyTable[i] = NULL;
     }
-    double edge_num = 0;
+    long edge_num = 0;
+    int zeroNum = 0;
     //计算邻接表
     ChainListNode *n;
-    for (int i = 0; i < nodeNum; i++)
+    LibXLHelper libXlHelper("degree_info.xls", LibXLHelper::Type::DEGREE_INFO);
+    LibXLHelper::DegreeInfoItem item{};
+    for (int i = 0; i < nodeNum; i++) {
+        int _edgeNum = 0;
+        item.nodeId = i;
         for (int j = i + 1; j < nodeNum; j++) {
             if (nodeList[i]->checkIfConnectTo(*nodeList[j])) {
                 //i,j相连
@@ -40,9 +46,20 @@ RandomGraph::RandomGraph() {
                 n = new ChainListNode(i, adjacencyTable[j]);
                 adjacencyTable[j] = n;
                 edge_num += 2;
+                _edgeNum += 2;
             }
         }
-    hr_log("average degree is %.2f\n", edge_num / nodeNum);
+        item.degree = _edgeNum;
+        libXlHelper.addDegreeInfoItem(item);
+        if (_edgeNum == 0) {
+            zeroNum++;
+        }
+//        hr_log("edge num: %d\n", _edgeNum);
+    }
+    hr_log("%d node have no adjacency\n", zeroNum);
+    hr_log("node num: %d\n", nodeNum);
+    hr_log("edge num: %ld\n", edge_num);
+    hr_log("average degree is %ld\n", edge_num / nodeNum);
 }
 
 RandomGraph::~RandomGraph() {
@@ -67,7 +84,6 @@ int RandomGraph::selectNeighbour(int curID, int desID, int i, std::map<int, int>
 //    cout << "{ " << endl;
     while (t != NULL) {
 //        cout << "(" << t->neighbourID << ", " << map[t->neighbourID] << "), ";
-//	    cout << map[t->neighbourID] << " - ";
         if (map[t->neighbourID] != 0) {
             t = t->next;
             continue;
@@ -92,8 +108,6 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
     //记录访问数据
 //    int *visited = new int[nodeNum];
     std::map<int, int> visited;
-    for (int i = 0; i < nodeNum; i++)
-        visited[i] = 0;
     //路由统计
     double totalDis = 0; //路由路径的总地理距离
     int hopNum = 0; //路由路径的跳数
@@ -106,9 +120,12 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
 //	    hr_log("\nlastId: %d\n", lastID);
         visited[curID] = 1;
         int nextID = selectNeighbour(curID, desID, pathStack.empty() ? -1 : pathStack.top(), visited);
-        if(nextID == -1 && !pathStack.empty()) {      // 发生循环错误
+        if (nextID == -1 && !pathStack.empty()) {      // 发生循环错误
             visited[curID] = -1;
+//            hopNum--;
+//            hr_log("[ <- %d ]\n", curID);
             curID = pathStack.top();
+//            hr_log(" -> %d \n", curID);
             pathStack.pop();
             continue;
         }
@@ -137,7 +154,7 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
         if (nextID == -1) {
             hr_log("\n[FALSE]: loop occured (%d, %d)\n\n", visited[nextID], nextID);
             item.result = "[FALSE]: loop occured";
-            if(pHelper != nullptr) {
+            if (pHelper != nullptr) {
                 pHelper->addItem(item);
             }
 //            delete[] visited;
@@ -150,9 +167,33 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
     item.result = "success";
     item.totalDistance = totalDis;
     item.hopNum = hopNum;
-    if(pHelper != nullptr) {
+    if (pHelper != nullptr) {
         pHelper->addItem(item);
     }
+//    int node_0 = 0;
+//    int node_1 = 0;
+//    int node_minus_1 = 0;
+//    cout << endl;
+//    for (auto item : visited) {
+//        switch (item.second) {
+//            case 0:
+//                node_0++;
+//                break;
+//            case 1:
+//                node_1++;
+//                cout << "[ " << item.first << " ]";
+//                printNeighbour(item.first);
+//                break;
+//            case -1:
+//                node_minus_1++;
+//                break;
+//        }
+//    }
+//    printNeighbour(156);
+//    printNeighbour(1633);
+//
+//    cout << endl;
+//    hr_log("\n(0 -> %d, 1 -> %d, -1 -> %d)", node_0, node_1, node_minus_1);
     hr_log("\n[SUCCESS]: total distance: %.3f, hop num: %d\n\n", totalDis, hopNum);
 //    delete[] visited;
     return true;
@@ -199,4 +240,14 @@ bool RandomGraph::randomRoutingTest(LibXLHelper *pHelper) const {
         }
     }
     return routingTest(src, des, pHelper);
+}
+
+void RandomGraph::printNeighbour(int id) const {
+    auto *head = adjacencyTable[id];
+    cout << endl;
+    while (head != nullptr) {
+        cout << head->neighbourID << " - ";
+        head = head->next;
+    }
+    cout << endl;
 }

@@ -7,4 +7,5 @@ CMakeCache.txt
 HR
 libxl/
 test.xls
+degree_info.xls
 .idea/
