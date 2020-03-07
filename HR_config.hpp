@@ -13,7 +13,7 @@
 #define SCARE_FREE_NETWORK_AVERAGE_DEGREE 4.92 //无标度网络的平均度数
 #define BASE 1
 //图中各种类节点的数目= BASE x SIZE
-#define SCARE_FREE_NETWORK_SIZE 2000 //bh无标度网络（地、空 节点）,目前比例是13:5的时候成功率才高一些
+#define SCARE_FREE_NETWORK_SIZE 200 //bh无标度网络（地、空 节点）,目前比例是13:5的时候成功率才高一些
 #define LOW_ORBIT_SIZE 72 //bh低轨
 #define MIDDLE_ORBIT_SIZE 18 //bh中轨
 #define HIGH_ORBIT_SIZE 3 //bh高轨

@@ -4,6 +4,12 @@
 #include "LibXLHelper.h"
 #include <map>
 #include <stack>
+#include<chrono>
+
+long getTime() {
+    auto timeNow = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+    return timeNow.count();
+}
 
 RandomGraph::RandomGraph() {
     //节点数目 = 地面节点 + 各高度的卫星节点
@@ -86,6 +92,7 @@ int RandomGraph::selectNeighbour(int curID, int desID, int i, std::map<int, int>
 
 bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const {
     LibXLHelper::Item item;
+    long startTime = getTime();
     item.src = srcID;
     item.des = desID;
     hr_log("src:%d, des:%d\n", srcID, desID);
@@ -110,6 +117,7 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
             visited[curID] = -1;
             curID = pathStack.top();
             pathStack.pop();
+            item.backTime++;
             continue;
         }
         // 限制只能回跳一步
@@ -151,6 +159,7 @@ bool RandomGraph::routingTest(int srcID, int desID, LibXLHelper *pHelper) const 
         hopNum++;
         curID = nextID;
     }
+    item.routingTime = getTime() - startTime;
     item.result = "success";
     item.totalDistance = totalDis;
     item.hopNum = hopNum;

@@ -16,6 +16,8 @@ LibXLHelper::LibXLHelper(string fileName) : fileName(std::move(fileName)) {
     sheet->writeStr(curRow, 3, "path");
     sheet->writeStr(curRow, 4, "total distance");
     sheet->writeStr(curRow, 5, "hop num");
+    sheet->writeStr(curRow, 6, "return to last node times");
+    sheet->writeStr(curRow, 7, "routing time (ms)");
 #endif
 }
 
@@ -35,6 +37,8 @@ const LibXLHelper &LibXLHelper::addItem(const LibXLHelper::Item &item) {
     sheet->writeStr(curRow, 3, item.path.c_str());
     sheet->writeNum(curRow, 4, item.totalDistance);
     sheet->writeNum(curRow, 5, item.hopNum);
+    sheet->writeStr(curRow, 6, item.backTime > 0 ? "yes" : "no");
+    sheet->writeNum(curRow, 7, item.routingTime);
 #endif
     return *this;
 }

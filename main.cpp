@@ -10,8 +10,8 @@ int main() {
     //system("pause");
     int successNum = 0;
     int totalNum = 10000;
-    LibXLHelper libXlHelper;
-//    g.routingTest(1042, 1249, nullptr);
+    LibXLHelper libXlHelper("result_" + to_string(SCARE_FREE_NETWORK_SIZE) + ".xls");
+//    g.routingTest(1311, 156, nullptr);
     srand((unsigned) time(NULL));
     for (int i = 0; i < totalNum; i++) {
         if (g.randomRoutingTest(&libXlHelper)) {

@@ -23,6 +23,8 @@ public:
         string path;                // 路由路径
         int totalDistance = -1;          // 总距离
         int hopNum = -1;                 // 路由成功的跳数
+        int backTime = 0;           // 回退次数
+        long routingTime = 0;       // 路由时间
     };
 private:
 #ifndef _WIN32
